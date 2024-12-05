@@ -32,7 +32,6 @@ def carregar_trajetorias(arquivo="trajetoriasClean.txt"):
     
     return trajetorias
 
-# Classe para representar o objeto carro
 class Carro:
     def __init__(self, trajetoria):
         self.trajetoria = trajetoria  # Lista de coordenadas (trajetória)
@@ -49,16 +48,21 @@ class Carro:
             dy = prox_ponto[1] - self.pos[1]
             dist_total = (dx**2 + dy**2)**0.5  # Distância Euclidiana
 
-            # Controla a velocidade (fazendo o movimento mais suave e constante)
-            if dist_total > 1:  # Evitar movimentos muito pequenos
-                movimento_x = (dx / dist_total) * 100 * dt  # Ajuste da velocidade (controle)
-                movimento_y = (dy / dist_total) * 100* dt  # Ajuste da velocidade (controle)
+            # Define um limite de erro para considerar que o carro chegou ao próximo ponto
+            erro_tolerado = 10.0  # Ajuste o valor conforme necessário para precisão
+
+            if dist_total > erro_tolerado:  # Só movimenta se a distância for maior que o erro tolerado
+                movimento_x = (dx / dist_total) * 100 * dt  # Velocidade ajustada pela distância
+                movimento_y = (dy / dist_total) * 100 * dt  # Velocidade ajustada pela distância
                 self.pos = (self.pos[0] + movimento_x, self.pos[1] + movimento_y)
             else:
-                self.pos = prox_ponto  # Chegou ao ponto, então atualiza para o próximo
-                self.ponto_atual += 1
+                self.pos = prox_ponto  # Atualiza a posição para o próximo ponto
+                self.ponto_atual += 1  # Avança para o próximo ponto da trajetória
+                self.history.append(self.pos)
 
-            self.history.append(self.pos)
+            
+
+
 
 # Função do EKF (Filtro de Kalman Estendido)
 def ekf(previous_points, prediction_range):
