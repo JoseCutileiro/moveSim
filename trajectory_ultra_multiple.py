@@ -4,6 +4,7 @@ import re
 import numpy as np
 import time
 from predictors import ekf, predizer_mais_semelhante
+
 # Inicializa o Pygame
 pygame.init()
 
@@ -61,7 +62,6 @@ class Carro:
                 self.ponto_atual += 1  # Avança para o próximo ponto da trajetória
                 self.history.append(self.pos)
 
-
 # Função principal
 def main():
     clock = pygame.time.Clock()
@@ -75,13 +75,14 @@ def main():
     temos_acesso = carregar_trajetorias("trajetorias.txt")
     
     traj = random.choice(trajetorias)  # Escolhe uma trajetória aleatória
-    print(f"Escolheu a trajetória: {traj}")
 
-    carro = Carro(traj)
+    # Criação de múltiplos carros
+    num_carros = 3  # Defina quantos carros você quer simular
+    carros = [Carro(random.choice(trajetorias)) for _ in range(num_carros)]
 
     # Configura a tela
     tela = pygame.display.set_mode(TAMANHO)
-    pygame.display.set_caption("Simulador de Carro com Novo Preditior")
+    pygame.display.set_caption("Simulador de Carros com Novo Preditior")
 
     rodando = True
     while rodando:
@@ -90,21 +91,23 @@ def main():
         tela.fill(BRANCO)  # Limpa a tela
         tela.blit(background, (0, 0))  # Coloca a imagem de fundo
 
-        carro.mover(dt)
+        # Atualiza e desenha todos os carros
+        for carro in carros:
+            carro.mover(dt)
 
-        # Desenha a trajetória real do carro
-        for i in range(len(carro.history) - 1):
-            pygame.draw.line(tela, AZUL, carro.history[i], carro.history[i + 1], 2)
+            # Desenha a trajetória real do carro
+            for i in range(len(carro.history) - 1):
+                pygame.draw.line(tela, AZUL, carro.history[i], carro.history[i + 1], 2)
 
-        # Desenha o ponto atual do carro como uma bola vermelha
-        pygame.draw.circle(tela, VERMELHO, (int(carro.pos[0]), int(carro.pos[1])), 10)
+            # Desenha o ponto atual do carro como uma bola vermelha
+            pygame.draw.circle(tela, VERMELHO, (int(carro.pos[0]), int(carro.pos[1])), 10)
 
-        # Predição da trajetória mais semelhante
-        traj_predita = predizer_mais_semelhante(carro.history, temos_acesso)
+            # Predição da trajetória mais semelhante
+            traj_predita = predizer_mais_semelhante(carro.history, temos_acesso)
 
-        # Desenha a trajetória prevista
-        for i in range(1, len(traj_predita)):
-            pygame.draw.line(tela, VERDE, traj_predita[i - 1], traj_predita[i], 2)
+            # Desenha a trajetória prevista
+            for i in range(1, len(traj_predita)):
+                pygame.draw.line(tela, VERDE, traj_predita[i - 1], traj_predita[i], 2)
 
         pygame.display.flip()
 
@@ -117,4 +120,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
