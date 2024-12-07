@@ -343,3 +343,59 @@ def markov_model_predictor(previous_points, prediction_range):
         predictions.append(tuple(current_position))
     
     return predictions
+
+
+
+
+
+
+############################################
+############################################
+############################################
+############################################
+############################################
+
+def calcular_similaridade(trajetoria1, trajetoria2):
+    """
+    Calcula a similaridade entre duas trajetórias usando a soma das distâncias euclidianas.
+    A trajetória mais curta é considerada mais similar.
+    """
+    similaridade = 0
+    min_len = min(len(trajetoria1), len(trajetoria2))
+    
+    for i in range(min_len):
+        x1, y1 = trajetoria1[i]
+        x2, y2 = trajetoria2[i]
+        similaridade += (x1 - x2)**2 + (y1 - y2)**2  # Distância euclidiana ao quadrado
+    
+    return similaridade  # Menor valor é mais parecido
+
+
+def predizer_mais_semelhante(historico, trajetorias):
+    """
+    Recebe o histórico do carro e as trajetórias disponíveis.
+    Retorna a trajetória mais semelhante com base na similaridade calculada.
+    A comparação é feita com as janelas de 10 pontos consecutivos em cada trajetória.
+    """
+    melhor_similaridade = float('inf')
+    traj_similar = None
+    indice_janela = -1
+
+    historico_reduzido = historico[-10:]  # Considera apenas os últimos 10 pontos do histórico
+
+    for traj in trajetorias:
+        # Para cada trajetória, percorre as janelas de 10 pontos consecutivos
+        for i in range(len(traj) - 10):  # Garante que haja uma janela de 10 pontos
+            traj_janela = traj[i:i+10]  # Subtrajetória de 10 pontos consecutivos
+            similaridade = calcular_similaridade(historico_reduzido, traj_janela)
+
+            if similaridade < melhor_similaridade:
+                melhor_similaridade = similaridade
+                traj_similar = traj
+                indice_janela = i  # Armazena o índice da janela mais semelhante
+
+    # Retorna o restante da trajetória após a janela de 10 pontos
+    if traj_similar is not None and indice_janela != -1:
+        return traj_similar[indice_janela + 5:]  # Retorna a parte da trajetória após os 10 primeiros pontos
+
+    return []  # Caso não encontre nenhuma trajetória, retorna lista vazia

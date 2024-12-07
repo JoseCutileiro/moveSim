@@ -35,18 +35,20 @@ def carregar_trajetorias(arquivo="trajetorias.txt"):
     
     return trajetorias
 
-def adicionar_noise(trajetoria, intensidade=5):
+def adicionar_noise(trajetoria, intensidade=4):
     """
     Adiciona ruído (noise) à trajetória.
     A intensidade controla o quanto de variação é aplicado.
     """
     trajetoria_com_noise = []
     for (x, y) in trajetoria:
+
         # Adiciona um deslocamento aleatório dentro de um intervalo (-intensidade, +intensidade)
         noise_x = random.uniform(-intensidade, intensidade)
         noise_y = random.uniform(-intensidade, intensidade)
         novo_ponto = (x + noise_x, y + noise_y)
         trajetoria_com_noise.append(novo_ponto)
+
     
     return trajetoria_com_noise
 
@@ -93,7 +95,6 @@ def save_traj(trajetoria, arquivo="trajetoriasSim.txt"):
         traj_str = ", ".join([f"({int(x)}, {int(y)})" for x, y in trajetoria])
         f.write(f"Traj: {traj_str}\n")
 
-
 # Função principal
 def main():
     clock = pygame.time.Clock()
@@ -108,6 +109,7 @@ def main():
     # Cria uma lista de objetos com trajetórias e velocidades diferentes
     objetos = []
     for i in range(30):
+        j = -1
         for traj in trajetorias:
             noise_traj = adicionar_noise(traj)
             noise_traj = provoque_failure(noise_traj)

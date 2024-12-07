@@ -3,7 +3,7 @@ import random
 import re
 import numpy as np
 import time
-from predictors import ekf
+from predictors import ekf, predizer_mais_semelhante
 # Inicializa o Pygame
 pygame.init()
 
@@ -55,6 +55,7 @@ class Carro:
                 movimento_x = (dx / dist_total) * 100 * dt  # Velocidade ajustada pela distância
                 movimento_y = (dy / dist_total) * 100 * dt  # Velocidade ajustada pela distância
                 self.pos = (self.pos[0] + movimento_x, self.pos[1] + movimento_y)
+                self.history.append(self.pos)
             else:
                 self.pos = prox_ponto  # Atualiza a posição para o próximo ponto
                 self.ponto_atual += 1  # Avança para o próximo ponto da trajetória
@@ -65,49 +66,49 @@ class Carro:
 def main():
     clock = pygame.time.Clock()
 
-    # Carregar a imagem de fundo (certifique-se de que o caminho está correto)
+    # Carregar a imagem de fundo
     background = pygame.image.load('road.png')
     background = pygame.transform.scale(background, TAMANHO)
 
-    # Carrega as trajetórias do arquivo e escolhe uma
-    trajetorias = carregar_trajetorias()
+    # Carregar as trajetórias do arquivo
+    trajetorias = carregar_trajetorias("trajetoriasClean.txt")
+    temos_acesso = carregar_trajetorias("trajetoriasClean.txt")
+    
     traj = random.choice(trajetorias)  # Escolhe uma trajetória aleatória
     print(f"Escolheu a trajetória: {traj}")
 
-    # Cria o carro
     carro = Carro(traj)
 
     # Configura a tela
     tela = pygame.display.set_mode(TAMANHO)
-    pygame.display.set_caption("Simulador de Carro com EKF")
+    pygame.display.set_caption("Simulador de Carro com Novo Preditior")
 
     rodando = True
     while rodando:
         dt = clock.tick(FPS) / 1000  # Tempo delta em segundos
 
-        tela.fill(BRANCO)  # Limpa a tela a cada quadro
+        tela.fill(BRANCO)  # Limpa a tela
         tela.blit(background, (0, 0))  # Coloca a imagem de fundo
-        # Atualiza a posição do carro e obtém a trajetória real
+
         carro.mover(dt)
 
         # Desenha a trajetória real do carro
         for i in range(len(carro.history) - 1):
             pygame.draw.line(tela, AZUL, carro.history[i], carro.history[i + 1], 2)
 
-        # Desenha o ponto atual do carro como uma bola vermelha (visível)
+        # Desenha o ponto atual do carro como uma bola vermelha
         pygame.draw.circle(tela, VERMELHO, (int(carro.pos[0]), int(carro.pos[1])), 10)
 
-        # Previsões usando EKF
-        predictions = ekf(carro.history, 50)
+        # Predição da trajetória mais semelhante
+        traj_predita = predizer_mais_semelhante(carro.history, temos_acesso)
 
-        # Desenha as previsões do EKF
-        for i in range(1, len(predictions)):
-            pygame.draw.line(tela, VERDE, predictions[i - 1], predictions[i], 2)
+        # Desenha a trajetória prevista
+        for i in range(1, len(traj_predita)):
+            pygame.draw.line(tela, VERDE, traj_predita[i - 1], traj_predita[i], 2)
 
-        # Atualiza a tela
         pygame.display.flip()
 
-        # Verifica eventos (como fechar a janela)
+        # Verifica eventos
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
@@ -116,3 +117,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

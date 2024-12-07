@@ -27,7 +27,7 @@ def suavizar_trajetoria(pontos, janela=3):
     return pontos_suavizados
 
 # Abrir o arquivo de entrada contendo as trajetórias
-with open('trajetorias.txt', 'r') as infile:
+with open('trajetoriasSim.txt', 'r') as infile:
     # Abrir o arquivo de saída para escrever as trajetórias processadas
     with open('trajetoriasClean.txt', 'w') as outfile:
         for line in infile:
@@ -43,7 +43,6 @@ with open('trajetorias.txt', 'r') as infile:
 
             # Usar regex para capturar corretamente os pontos
             points = re.findall(r'\((-?\d+),\s*(-?\d+)\)', points_raw)
-
             # Converter as strings para tuplas de inteiros
             points = [(int(x), int(y)) for x, y in points]
 
