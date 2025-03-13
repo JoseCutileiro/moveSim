@@ -102,9 +102,16 @@ def main():
         # Predição da trajetória mais semelhante
         traj_predita = predizer_mais_semelhante(carro.history, temos_acesso)
 
-        # Desenha a trajetória prevista
+        # Desenha a trajetória prevista com cruzes nos pontos
         for i in range(1, len(traj_predita)):
             pygame.draw.line(tela, VERDE, traj_predita[i - 1], traj_predita[i], 13)
+            
+            # Adiciona uma cruz nos pontos da trajetória prevista
+            x, y = traj_predita[i]
+            tamanho_cruz = 10  # Define o tamanho da cruz
+            pygame.draw.line(tela, (0,0,0), (x - tamanho_cruz, y - tamanho_cruz), (x + tamanho_cruz, y + tamanho_cruz), 3)  # Diagonal \
+            pygame.draw.line(tela, (0,0,0), (x - tamanho_cruz, y + tamanho_cruz), (x + tamanho_cruz, y - tamanho_cruz), 3)  # Diagonal /
+
 
         pygame.display.flip()
 

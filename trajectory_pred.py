@@ -16,7 +16,7 @@ FPS = 60  # Aumentei o FPS para melhorar a suavidade do movimento
 # Cores
 BRANCO = (255, 255, 255)
 AZUL = (0, 0, 255)
-VERDE = (0, 255, 0)
+VERDE = (0, 140, 0)
 VERMELHO = (255, 0, 0)  # Cor para o ponto atual (bola)
 
 # Carrega as trajetórias do arquivo
@@ -92,7 +92,7 @@ def main():
 
         # Desenha a trajetória real do carro
         for i in range(len(carro.history) - 1):
-            pygame.draw.line(tela, AZUL, carro.history[i], carro.history[i + 1], 2)
+            pygame.draw.line(tela, AZUL, carro.history[i], carro.history[i + 1], 13)
 
         # Desenha o ponto atual do carro como uma bola vermelha (visível)
         pygame.draw.circle(tela, VERMELHO, (int(carro.pos[0]), int(carro.pos[1])), 10)
@@ -102,7 +102,7 @@ def main():
 
         # Desenha as previsões do EKF
         for i in range(1, len(predictions)):
-            pygame.draw.line(tela, VERDE, predictions[i - 1], predictions[i], 2)
+            pygame.draw.line(tela, VERDE, predictions[i - 1], predictions[i], 13)
 
         # Atualiza a tela
         pygame.display.flip()

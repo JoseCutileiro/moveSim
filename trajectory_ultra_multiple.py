@@ -77,7 +77,7 @@ def main():
     traj = random.choice(trajetorias)  # Escolhe uma trajetória aleatória
 
     # Criação de múltiplos carros
-    num_carros = 3  # Defina quantos carros você quer simular
+    num_carros = 1  # Defina quantos carros você quer simular
     carros = [Carro(random.choice(trajetorias)) for _ in range(num_carros)]
 
     # Configura a tela
