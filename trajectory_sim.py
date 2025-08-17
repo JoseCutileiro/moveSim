@@ -108,7 +108,7 @@ def main():
 
     # Cria uma lista de objetos com trajetórias e velocidades diferentes
     objetos = []
-    for i in range(30):
+    for i in range(200):
         j = -1
         for traj in trajetorias:
             noise_traj = adicionar_noise(traj)
